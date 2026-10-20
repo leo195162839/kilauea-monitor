@@ -1,16 +1,8 @@
 import { ACTIVITY_LABEL, describeActivity } from '../lib/activity';
 import { useNow } from '../lib/hooks';
 import { ALERT_LEVELS, COLOR_CODES, levelInfo, type Severity } from '../lib/levels';
+import type { StatusBasis } from '../lib/status';
 import { formatAgo, formatHst } from '../lib/time';
-
-/** The newest HVO notice (daily update or aviation notice) that the status is read from. */
-export interface StatusBasis {
-  text: string;
-  at: Date;
-  source: string;
-  alertLevel: string;
-  colorCode: string;
-}
 
 interface Props {
   basis: StatusBasis | undefined;

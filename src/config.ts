@@ -1,3 +1,5 @@
+// Also imported by the alerts Worker (worker/), so nothing Vite-specific (import.meta.env) here.
+
 export const KILAUEA = {
   vnum: '332010',
   lat: 19.421,

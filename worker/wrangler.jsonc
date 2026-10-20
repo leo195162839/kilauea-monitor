@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "kilauea-alerts",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "triggers": {
+    // Check HVO every minute.
+    "crons": ["* * * * *"]
+  },
+  "vars": {
+    // Public half of the push key pair; the private half is the VAPID_PRIVATE_KEY secret.
+    "VAPID_PUBLIC_KEY": "BKCxnkz6qID4txUBZwPCC_n99rXqksSqIaqz0vI9U7ijcIAkzCDHDuXx0Xr5YpoJ3ArYXaM_W_VQlRG8odHXdOE",
+    "VAPID_SUBJECT": "https://leo195162839.github.io/kilauea-monitor/",
+    "ALLOWED_ORIGINS": "https://leo195162839.github.io"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "kilauea-alerts",
+      "database_id": "51971cec-eb54-4692-91e0-a455a7360a80",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "observability": { "enabled": true }
+}

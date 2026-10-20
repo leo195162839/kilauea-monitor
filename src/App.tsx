@@ -1,18 +1,23 @@
 import { useState } from 'react';
+import { AlertsPanel } from './components/AlertsPanel';
 import { LatestUpdate } from './components/LatestUpdate';
 import { QuakePanel } from './components/QuakePanel';
 import { RangeFilter } from './components/RangeFilter';
-import { StatusSummary, type StatusBasis } from './components/StatusSummary';
+import { StatusSummary } from './components/StatusSummary';
 import { TiltPanel } from './components/TiltPanel';
 import { Webcams } from './components/Webcams';
 import { POLL_MS, type RangeKey } from './config';
 import { usePolling } from './lib/hooks';
-import { fetchAviationNotices, fetchLatestUpdate, type AviationNotice, type LatestUpdate as Update } from './sources/hans';
+import { alertsAvailable, storedAlertsKey } from './lib/push';
+import { newestBasis } from './lib/status';
+import { fetchAviationNotices, fetchLatestUpdate } from './sources/hans';
 
 export function App() {
   const update = usePolling(fetchLatestUpdate, POLL_MS.notices);
   const notices = usePolling((signal) => fetchAviationNotices(signal), POLL_MS.notices);
   const [range, setRange] = useState<RangeKey>('2d');
+  // Alerts are private: the card appears only on devices that have the alerts key.
+  const [alertsOpen, setAlertsOpen] = useState(() => alertsAvailable() && storedAlertsKey() !== null);
 
   const retryNotices = () => {
     update.refresh();
@@ -35,6 +40,8 @@ export function App() {
           error={update.error ?? notices.error}
           onRetry={retryNotices}
         />
+
+        {alertsOpen && <AlertsPanel onClose={() => setAlertsOpen(false)} />}
 
         <LatestUpdate
           update={update.data}
@@ -79,6 +86,13 @@ export function App() {
               Hawaiʻi Volcanoes National Park
             </a>
           </li>
+          {alertsAvailable() && !alertsOpen && (
+            <li>
+              <button type="button" className="link-button footer-button" onClick={() => setAlertsOpen(true)}>
+                Private alerts
+              </button>
+            </li>
+          )}
         </ul>
         <p className="footer-sources">
           Data: USGS Hawaiian Volcano Observatory and USGS Earthquake Hazards Program. Basemap: USGS The National Map.
@@ -86,30 +100,4 @@ export function App() {
       </footer>
     </div>
   );
-}
-
-// The status comes from whichever is newer: the latest HVO notice of any kind, or
-// the latest aviation notice (issued at episode onset, peak and end).
-function newestBasis(update: Update | null | undefined, notices: AviationNotice[] | undefined): StatusBasis | undefined {
-  const candidates: StatusBasis[] = [];
-  if (update) {
-    candidates.push({
-      text: update.synopsis,
-      at: update.sentAt,
-      source: update.type || 'HVO notice',
-      alertLevel: update.alertLevel,
-      colorCode: update.colorCode,
-    });
-  }
-  const vona = notices?.[0];
-  if (vona) {
-    candidates.push({
-      text: vona.synopsis,
-      at: vona.issuedAt,
-      source: 'Aviation notice (VONA)',
-      alertLevel: vona.alertLevel,
-      colorCode: vona.colorCode,
-    });
-  }
-  return candidates.sort((a, b) => b.at.getTime() - a.at.getTime())[0];
 }

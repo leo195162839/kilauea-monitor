@@ -255,6 +255,61 @@ main {
   background: var(--status-critical);
 }
 
+/* Alerts */
+
+.alerts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 24px;
+}
+
+.alerts-text {
+  flex: 1 1 320px;
+}
+
+.alerts .panel-note {
+  max-width: 75ch;
+}
+
+.alerts-state {
+  font-size: 0.9375rem;
+}
+
+.alerts .button {
+  margin-top: 0;
+}
+
+.key-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 8px;
+}
+
+.key-form label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.key-form input {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 6px 10px;
+  font: inherit;
+  color: var(--text-primary);
+  background: var(--page);
+  border: 1px solid var(--axis);
+  border-radius: 8px;
+}
+
+.footer-button {
+  margin-left: 0;
+  font-size: inherit;
+}
+
 /* Latest update */
 
 .card-head {

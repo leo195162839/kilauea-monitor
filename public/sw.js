@@ -42,6 +42,27 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
+// Alerts from the Worker in worker/: the payload is { title, body }.
+self.addEventListener('push', (event) => {
+  let alert = { title: 'Kīlauea Monitor', body: 'HVO has posted an update.' };
+  try {
+    alert = { ...alert, ...event.data?.json() };
+  } catch {
+    // Keep the generic text; a push must always show a notification.
+  }
+  event.waitUntil(self.registration.showNotification(alert.title, { body: alert.body, icon: `${SCOPE}icons/icon-192.png` }));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windows) => {
+      const open = windows.find((w) => w.url.startsWith(SCOPE));
+      return open ? open.focus() : self.clients.openWindow(SCOPE);
+    }),
+  );
+});
+
 // Network first, so a new deploy shows up on the next launch; the cached page is the offline fallback.
 async function pageNetworkFirst(event) {
   try {
