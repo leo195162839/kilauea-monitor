@@ -418,21 +418,20 @@ main {
   color: var(--text-secondary);
 }
 
+/* Inline, so a long message wraps as text with the dot and Retry staying beside it. */
 .source-error {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0 4px;
   color: var(--text-primary);
 }
 
 .source-error::before {
   content: '';
+  display: inline-block;
   width: 10px;
   height: 10px;
-  margin-right: 4px;
+  margin-right: 8px;
   border-radius: 50%;
   background: var(--status-critical);
+  vertical-align: -1px;
 }
 
 /* Webcams */

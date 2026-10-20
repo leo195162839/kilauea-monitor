@@ -73,7 +73,9 @@ export function QuakePanel({ range }: { range: RangeKey }) {
       <section className="card span-all" aria-labelledby="quake-list-title">
         <h3 id="quake-list-title">Earthquake list</h3>
         {quakes.length === 0 ? (
-          <p className="placeholder-text">{data ? `No earthquakes ${scope}.` : 'Loading…'}</p>
+          <p className="placeholder-text">
+            {data ? `No earthquakes ${scope}.` : error ? 'Earthquake data unavailable.' : 'Loading…'}
+          </p>
         ) : (
           <>
             <div className="table-scroll">
