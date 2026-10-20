@@ -42,15 +42,17 @@ export function snapshotOf(basis: StatusBasis, previous: Snapshot | null): Snaps
 export function alertFor(previous: Snapshot | null, current: Snapshot): Alert | null {
   if (!previous) return null;
   const stateChanged = current.state !== previous.state && ALERT_STATES.includes(current.state);
-  const levelChanged = current.alertLevel !== previous.alertLevel || current.colorCode !== previous.colorCode;
-  if (!stateChanged && !levelChanged) return null;
+  // Only what changed, e.g. "Color code ORANGE → YELLOW."
+  const changes = [
+    current.alertLevel !== previous.alertLevel ? `alert level ${previous.alertLevel} → ${current.alertLevel}` : '',
+    current.colorCode !== previous.colorCode ? `color code ${previous.colorCode} → ${current.colorCode}` : '',
+  ].filter(Boolean);
+  if (!stateChanged && changes.length === 0) return null;
 
   const title = stateChanged
     ? `Kīlauea: ${ACTIVITY_LABEL[current.state]}${current.detail ? ` · ${current.detail}` : ''}`
     : `Kīlauea: ${current.alertLevel} / ${current.colorCode}`;
-  const levels = levelChanged
-    ? `Alert level ${previous.alertLevel} → ${current.alertLevel}, color code ${previous.colorCode} → ${current.colorCode}. `
-    : '';
+  const levels = changes.length > 0 ? `${changes.join(', ').replace(/^./, (c) => c.toUpperCase())}. ` : '';
   const body = `${levels}${current.text}`;
   return { title, body: body.length > MAX_BODY ? `${body.slice(0, MAX_BODY - 1)}…` : body };
 }
